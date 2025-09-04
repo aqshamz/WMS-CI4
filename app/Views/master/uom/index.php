@@ -87,12 +87,6 @@
 <?= $this->section('scripts') ?>
 <script>
 $(document).ready(function () {
-    $("#item_master").addClass('active');
-    $("#link_master").addClass('active').attr("aria-expanded", "true");
-    $("#submenu_master").addClass("show");
-
-    $("#item_uom").addClass('active');
-    $("#link_uom").addClass('active');
 
     var manageTable = $('#uomTable').DataTable({
         "ajax": {

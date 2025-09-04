@@ -86,14 +86,16 @@ class MasterPartnerController extends BaseController
         if (empty($role)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Type is required'
+                'message' => 'Type is required',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
         if (empty($name)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Name is required'
+                'message' => 'Name is required',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
@@ -105,12 +107,14 @@ class MasterPartnerController extends BaseController
         if ($model->insert($data)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Partner added successfully'
+                'message' => 'Partner added successfully',
+                'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to add partner'
+                'message' => 'Failed to add partner',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
@@ -124,14 +128,16 @@ class MasterPartnerController extends BaseController
         if (empty($name) || empty($id)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Partner Name is required'
+                'message' => 'Partner Name is required',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
         if (empty($role)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Type is required'
+                'message' => 'Type is required',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
@@ -143,12 +149,14 @@ class MasterPartnerController extends BaseController
         if ($model->update($id, $data)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Partner updated successfully'
+                'message' => 'Partner updated successfully',
+                'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to update Partner'
+                'message' => 'Failed to update Partner',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
@@ -160,19 +168,22 @@ class MasterPartnerController extends BaseController
         if (empty($id)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete Partner'
+                'message' => 'Failed to delete Partner',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
         if ($model->delete($id)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Partner deleted successfully'
+                'message' => 'Partner deleted successfully',
+                'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete Partner'
+                'message' => 'Failed to delete Partner',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }

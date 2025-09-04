@@ -82,7 +82,8 @@ class MasterUomController extends BaseController
         if (empty($name)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'UOM Name is required'
+                'message' => 'UOM Name is required',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
@@ -93,12 +94,14 @@ class MasterUomController extends BaseController
         if ($model->insert($data)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'UOM added successfully'
+                'message' => 'UOM added successfully',
+                'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to add UOM'
+                'message' => 'Failed to add UOM',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
@@ -111,7 +114,8 @@ class MasterUomController extends BaseController
         if (empty($name) || empty($id)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'UOM Name is required'
+                'message' => 'UOM Name is required',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
@@ -122,12 +126,14 @@ class MasterUomController extends BaseController
         if ($model->update($id, $data)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'UOM updated successfully'
+                'message' => 'UOM updated successfully',
+                'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to update UOM'
+                'message' => 'Failed to update UOM',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
@@ -139,19 +145,22 @@ class MasterUomController extends BaseController
         if (empty($id)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete Uom'
+                'message' => 'Failed to delete Uom',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
         if ($model->delete($id)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'UOM deleted successfully'
+                'message' => 'UOM deleted successfully',
+                'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete UOM'
+                'message' => 'Failed to delete UOM',
+                'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
