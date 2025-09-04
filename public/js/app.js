@@ -9,4 +9,25 @@ document.addEventListener("DOMContentLoaded", function () {
             sidebar.classList.toggle("collapsed"); // desktop shrink
         }
     });
+
+     $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            let tokenName = $('meta[name="csrf-token-name"]').attr('content');
+            let tokenHash = $('meta[name="csrf-token-hash"]').attr('content');
+            if (settings.type === 'POST' || settings.type === 'PUT' || settings.type === 'DELETE') {
+                settings.data = settings.data || {};
+                if (typeof settings.data === "string") {
+                    settings.data += `&${tokenName}=${tokenHash}`;
+                } else {
+                    settings.data[tokenName] = tokenHash;
+                }
+            }
+        },
+        complete: function(xhr) {
+            let newToken = xhr.responseJSON?.csrfHash;
+            if (newToken) {
+                $('meta[name="csrf-token-hash"]').attr('content', newToken);
+            }
+        }
+    });
 });

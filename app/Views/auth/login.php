@@ -59,6 +59,7 @@
         <?php endif; ?>
 
         <form method="post" action="<?= site_url('auth/doLogin') ?>">
+            <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
             <div class="mb-3">
                 <label>Email</label>
                 <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
