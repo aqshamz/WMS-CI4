@@ -118,17 +118,18 @@ $(document).ready(function () {
                     name: name,
                 },
                 success: function(response) {
-                    if (response.status === 'success') {
-                        toastr.success(response.message);
-                        $('#addUomModal').modal('hide');
-                        $('#addUomForm')[0].reset();
-                        $('#uomTable').DataTable().ajax.reload();
-                    } else {
-                        toastr.error(response.message);
-                    }
+                    toastr.success(response.message);
+                    $('#addUomModal').modal('hide');
+                    $('#addUomForm')[0].reset();
+                    $('#uomTable').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
-                    toastr.error('Failed to save uom: ' + error);
+                    let res = xhr.responseJSON;    
+                    if (res && res.message) {
+                        toastr.error(res.message);
+                    } else {
+                        toastr.error('Failed to save uom: ' + error);
+                    }
                 }
             });
         } else {
@@ -158,17 +159,18 @@ $(document).ready(function () {
                     id: id
                 },
                 success: function(response) {
-                    if (response.status === 'success') {
-                        toastr.success(response.message);
-                        $('#updateUomModal').modal('hide');
-                        $('#updateUomForm')[0].reset();
-                        $('#uomTable').DataTable().ajax.reload();
-                    } else {
-                        toastr.error(response.message);
-                    }
+                    toastr.success(response.message);
+                    $('#updateUomModal').modal('hide');
+                    $('#updateUomForm')[0].reset();
+                    $('#uomTable').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
-                    toastr.error('Failed to update uom: ' + error);
+                    let res = xhr.responseJSON;    
+                    if (res && res.message) {
+                        toastr.error(res.message);
+                    } else {
+                        toastr.error('Failed to update uom: ' + error);
+                    }                    
                 }
             });
         } else {
@@ -195,15 +197,16 @@ $(document).ready(function () {
                         id: id
                     },
                     success: function (response) {                        
-                        if(response.status === 'success'){
-                            toastr.success(response.message);
-                            $('#uomTable').DataTable().ajax.reload();
-                        }else{
-                            toastr.error(response.message);
-                        }
+                        toastr.success(response.message);
+                        $('#uomTable').DataTable().ajax.reload();
                     },
                     error: function () {
-                        toastr.error('An error occurred');
+                        let res = xhr.responseJSON;    
+                        if (res && res.message) {
+                            toastr.error(res.message);
+                        } else {
+                            toastr.error('Failed to delete uom: ' + error);
+                        }
                     }
                 });
             }
