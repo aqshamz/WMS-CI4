@@ -8,11 +8,24 @@ class ProductModel extends Model
 {
     protected $table = 'master_products';
     protected $primaryKey = 'product_id';
-    // protected $allowedFields = ['role_id', 'permission_id', 'menu_id', 'sub_menu_id'];
+    protected $allowedFields = ['sku_code','name', 'rotation', 'base_uom_id', 'barcode', 'is_pack_free', 'is_active'];
 
-    public function getAllProduct()
+    // public function getAllUom()
+    // {
+    //     return $this->select('product_id, sku_code, name, rotation, base_uom_id, barcode,
+    //     is_pack_free, is_active')->findAll();
+    // }
+
+    public function getProductsWithUom($productId = null)
     {
-        return $this->select('product_id, sku_code, name, rotation, base_uom_id, barcode,
-        is_pack_free, is_active')->findAll();
+        $builder = $this->select('master_products.*, master_uom.name as uom_name')
+                    ->join('master_uom', 'master_uom.uom_id = master_products.base_uom_id');
+
+        if ($productId !== null) {
+            return $builder->where('master_products.product_id', $productId)->first(); 
+        }
+
+        return $builder->findAll();
     }
+
 }

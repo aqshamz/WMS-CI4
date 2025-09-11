@@ -10,9 +10,14 @@ class PartnerModel extends Model
     protected $primaryKey = 'partner_id';
     protected $allowedFields = ['name', 'role'];
 
-    // public function getAllUom()
-    // {
-    //     return $this->select('product_id, sku_code, name, rotation, base_uom_id, barcode,
-    //     is_pack_free, is_active')->findAll();
-    // }
+    public function getPartnerDetail($partnerId = null)
+    {
+        $builder = $this->select('partners.*');
+
+        if ($partnerId !== null) {
+            return $builder->where('partners.partner_id', $partnerId)->first(); 
+        }
+
+        return $builder->findAll();
+    }
 }

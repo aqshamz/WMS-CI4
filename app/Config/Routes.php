@@ -33,6 +33,28 @@ $routes->group('', ['filter' => 'authcheck'], function($routes) {
         $routes->post('add', 'MasterPartnerController::addPartner');
         $routes->post('update', 'MasterPartnerController::updatePartner');
         $routes->post('delete', 'MasterPartnerController::deletePartner');
+
+        $routes->post('setProduct', 'MasterPartnerController::setProduct');
+        $routes->get('product', 'MasterPartnerController::product');
+        $routes->post('data-product', 'MasterPartnerController::getProduct');
+        $routes->post('add-product', 'MasterPartnerController::addProduct');
+        $routes->post('update-product', 'MasterPartnerController::updateProduct');
+        $routes->post('delete-product', 'MasterPartnerController::deleteProduct');
+    });
+
+    $routes->group('product', function($routes) {
+        $routes->get('/', 'MasterProductController::index');
+        $routes->get('data', 'MasterProductController::getProduct');
+        $routes->post('add', 'MasterProductController::addProduct');
+        $routes->post('update', 'MasterProductController::updateProduct');
+        $routes->post('delete', 'MasterProductController::deleteProduct');
+
+        $routes->post('setConvertion', 'MasterProductController::setConvertion');
+        $routes->get('convertion', 'MasterProductController::convertion');
+        $routes->post('data-convertion', 'MasterProductController::getConvertion');
+        $routes->post('add-convertion', 'MasterProductController::addConvertion');
+        $routes->post('update-convertion', 'MasterProductController::updateConvertion');
+        $routes->post('delete-convertion', 'MasterProductController::deleteConvertion');
     });
 
     $routes->group('admin', ['filter' => 'rolecheck:1'], function($routes) {
