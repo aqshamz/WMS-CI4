@@ -2,56 +2,51 @@
 
 namespace App\Controllers;
 
-use App\Models\PartnerModel;
-use App\Models\PartnerProductModel;
-use App\Models\ProductModel;
+use App\Models\WarehouseModel;
+use App\Models\LocationModel;
 
-class MasterPartnerController extends BaseController
+class MasterWarehouseController extends BaseController
 {
-
     
     public function index()
     {
-        if (!hasPermission('view', 'Master', 'Partner', true)) { 
+        if (!hasPermission('view', 'Master', 'Warehouse', true)) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Partner', false)) { 
+        if (hasPermission('create', 'Master', 'Warehouse', false)) { 
             $createAllowed = true;
         }
 
         $data['create'] = $createAllowed;
 
-        return view('master/partner/index', $data);
+        $model = new WarehouseModel();
+        $warehouses = $model->findAll();
+        $data['warehouses'] = $warehouses;
+
+        return view('master/warehouse/index', $data);
     }
 
-    public function getPartners()
+    public function getWarehouse()
     {
-        $model = new PartnerModel();
-        $partners = $model->findAll();  
+        $model = new WarehouseModel();
+        $warehouses = $model->findAll();  
 
         $result = ['data' => []];
 
-        $updateAllowed = false;
-        if (hasPermission('update', 'Master', 'Partner', false)) { 
-            $updateAllowed = true;
-        }
+        $updateAllowed = hasPermission('update', 'Master', 'Warehouse', false);
+        $deleteAllowed = hasPermission('delete', 'Master', 'Warehouse', false);
 
-        $deleteAllowed = false;
-        if (hasPermission('delete', 'Master', 'Partner', false)) { 
-            $deleteAllowed = true;
-        }
-
-        if (!empty($partners)) {
-            foreach ($partners as $key => $partner) {
+        if (!empty($warehouses)) {
+            foreach ($warehouses as $key => $warehouse) {
                 $buttons = '';
 
                 if ($updateAllowed) {
                     $buttons .= ' 
-                        <form action="' . site_url('partner/setProduct') . '" method="post" class="d-inline">
+                        <form action="' . site_url('warehouse/setLocation') . '" method="post" class="d-inline">
                             ' . csrf_field() . '
-                            <input type="hidden" name="id" value="' . $partner['partner_id'] . '">
+                            <input type="hidden" name="id" value="' . $warehouse['warehouse_id'] . '">
                             <button type="submit" class="btn btn-sm btn-info me-1">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -59,26 +54,26 @@ class MasterPartnerController extends BaseController
                 }
 
                 if ($updateAllowed) {
-                    $buttons .= ' <button class="btn btn-sm btn-warning me-1 edit-partner"
-                                    data-id="' . $partner['partner_id'] . '"
-                                    data-name="' . htmlspecialchars($partner['name'], ENT_QUOTES, 'UTF-8') . '"
-                                    data-role="' . htmlspecialchars($partner['role'], ENT_QUOTES, 'UTF-8') . '"
+                    $buttons .= ' <button class="btn btn-sm btn-warning me-1 editWarehouse"
+                                    data-id="' . $warehouse['warehouse_id'] . '"
+                                    data-name="' . $warehouse['name'] . '"
+                                    data-address="' . $warehouse['address'] . '"
                                     >
                                     <i class="fas fa-edit"></i>
                                   </button>';
                 }
 
                 if ($deleteAllowed) {
-                    $buttons .= ' <button type="button" class="btn btn-sm btn-danger delete-partner"
-                                    data-id="' . $partner['partner_id'] . '">
+                    $buttons .= ' <button type="button" class="btn btn-sm btn-danger deleteWarehouse"
+                                    data-id="' . $warehouse['warehouse_id'] . '">
                                     <i class="fas fa-trash-alt"></i>
                                   </button>';
                 }
 
                 $result['data'][$key] = [
                     ($key + 1),
-                    $partner['role'] ?? '-',
-                    $partner['name'] ?? '-',
+                    $warehouse['name'] ?? '-',
+                    $warehouse['address'] ?? '-',
                     $buttons
                 ];
             }
@@ -87,17 +82,61 @@ class MasterPartnerController extends BaseController
         return $this->response->setJSON($result);
     }
 
-    public function addPartner()
+    public function addWarehouse()
     {
-        $model = new PartnerModel();
+        $model = new WarehouseModel();
         $name = $this->request->getPost('name');
-        $role = $this->request->getPost('role');
-        if (empty($role)) {
+        $address = $this->request->getPost('address');
+
+        if (empty($name)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Type is required',
+                'message' => 'Name is required',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
+        }
+
+        if (empty($address)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Address is required',
+                'csrfHash' => csrf_hash()
+            ])->setStatusCode(400);
+        }
+
+        $data = [
+            'name' => $name,
+            'address' => $address,
+        ];
+
+        if ($model->insert($data)) {
+            return $this->response->setJSON([
+                'status'  => 'success',
+                'message' => 'Warehouse added successfully',
+                'csrfHash' => csrf_hash()
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Failed to add warehouse',
+                'csrfHash' => csrf_hash()
+            ])->setStatusCode(500);
+        }
+    }
+
+    public function updateWarehouse()
+    {
+        $model = new WarehouseModel();
+        $id = $this->request->getPost('id');
+        $name = $this->request->getPost('name');
+        $address = $this->request->getPost('address');
+        
+        if (empty($id)) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Failed to update warehouse',
+                'csrfHash' => csrf_hash()
+            ])->setStatusCode(500);
         }
 
         if (empty($name)) {
@@ -108,76 +147,42 @@ class MasterPartnerController extends BaseController
             ])->setStatusCode(400);
         }
 
-        $data = [
-            'name' => $name,
-            'role' => $role,
-        ];
-
-        if ($model->insert($data)) {
-            return $this->response->setJSON([
-                'status'  => 'success',
-                'message' => 'Partner added successfully',
-                'csrfHash' => csrf_hash()
-            ]);
-        } else {
+        if (empty($address)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to add partner',
-                'csrfHash' => csrf_hash()
-            ])->setStatusCode(500);
-        }
-    }
-
-    public function updatePartner()
-    {
-        $model = new PartnerModel();
-        $name = $this->request->getPost('name');
-        $role = $this->request->getPost('role');
-        $id = $this->request->getPost('id');
-        if (empty($name) || empty($id)) {
-            return $this->response->setJSON([
-                'status'  => 'error',
-                'message' => 'Partner Name is required',
-                'csrfHash' => csrf_hash()
-            ])->setStatusCode(400);
-        }
-
-        if (empty($role)) {
-            return $this->response->setJSON([
-                'status'  => 'error',
-                'message' => 'Type is required',
+                'message' => 'Address is required',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
         $data = [
             'name' => $name,
-            'role' => $role,
+            'address' => $address,
         ];
 
         if ($model->update($id, $data)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Partner updated successfully',
+                'message' => 'Warehouse updated successfully',
                 'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to update Partner',
+                'message' => 'Failed to update Warehouse',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
 
-    public function deletePartner()
+    public function deleteWarehouse()
     {
-        $model = new PartnerModel();
+        $model = new WarehouseModel();
         $id = $this->request->getPost('id');
         if (empty($id)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete Partner',
+                'message' => 'Failed to delete Warehouse',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
@@ -185,111 +190,107 @@ class MasterPartnerController extends BaseController
         if ($model->delete($id)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Partner deleted successfully',
+                'message' => 'Warehouse deleted successfully',
                 'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete Partner',
+                'message' => 'Failed to delete Warehouse',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
 
-    public function setProduct()
+    public function setLocation()
     {
         $id = $this->request->getPost('id');
 
         if (!$id) {
-            return redirect()->to('/partner');
+            return redirect()->to('/warehouse');
         }
 
-        session()->setFlashdata('detail_partner_id', $id);
+        session()->setFlashdata('detail_warehouse_id', $id);
 
-        return redirect()->to('/partner/product');
+        return redirect()->to('/warehouse/location');
     }
 
-    public function product()
+    public function location()
     {
-        if (!hasPermission('edit', 'Master', 'Partner', true)) { 
+        if (!hasPermission('edit', 'Master', 'Warehouse', true)) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
-        $id = session()->getFlashdata('detail_partner_id'); 
+        $id = session()->getFlashdata('detail_warehouse_id'); 
         
         if (!$id) {
-            return redirect()->to('/partner')->with('error', 'Product not found.');
+            return redirect()->to('/warehouse')->with('error', 'Warehouse not found.');
         }
         
         
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Partner', false)) { 
+        if (hasPermission('create', 'Master', 'Warehouse', false)) { 
             $createAllowed = true;
         }
         
-        $model = new PartnerModel();
-        $partner = $model->getPartnerDetail($id);
+        $model = new WarehouseModel();
+        $warehouse = $model->getWarehouseDetail($id);
         
-        if (!$partner) {
-            return redirect()->to('/partner')->with('error', 'Partner not found.');
+        if (!$warehouse) {
+            return redirect()->to('/warehouse')->with('error', 'Warehouse not found.');
         }
         
-        $listProduct = new ProductModel();
-        $products = $listProduct->findAll();  
-
         $data['id'] = $id;
         $data['create'] = $createAllowed;
-        $data['detail'] = $partner;
-        $data['products'] = $products;
+        $data['detail'] = $warehouse;
 
-        return view('master/partner/product', $data);
+        return view('master/warehouse/location', $data);
 
     }
 
-    public function getProduct()
+    public function getLocation()
     {
-        $partnerId = $this->request->getPost('id'); 
+        $warehouseId = $this->request->getPost('id'); 
 
-        if (!$partnerId) {
+        if (!$warehouseId) {
             return $this->response->setJSON([
                 'data'      => [],
                 'csrfHash'  => csrf_hash(),
-                'error'     => 'Partner ID is required'
+                'error'     => 'Warehouse ID is required'
             ]);
         }
 
-        $model = new PartnerProductModel();
-        $products = $model->getPartnerProductsDetail($partnerId);
+        $model = new LocationModel();
+        $locations = $model->getLocation($warehouseId);
 
         $result = ['data' => []];
 
-        $updateAllowed = hasPermission('update', 'Master', 'Partner', false);
-        $deleteAllowed = hasPermission('delete', 'Master', 'Partner', false);
+        $updateAllowed = hasPermission('update', 'Master', 'Warehouse', false);
+        $deleteAllowed = hasPermission('delete', 'Master', 'Warehouse', false);
 
-        foreach ($products as $key => $product) {
+        foreach ($locations as $key => $location) {
             $buttons = '';
 
             if ($updateAllowed) {
-                $buttons .= '<button class="btn btn-sm btn-warning editProduct" 
-                                data-id="' . $product['partner_product_id'] . '"
-                                data-product="' . $product['product_id'] . '"
-                                data-sku="' . $product['customer_sku'] . '"
+                $buttons .= '<button class="btn btn-sm btn-warning editLocation" 
+                                data-id="' . $location['location_id'] . '"
+                                data-code="' . $location['location_code'] . '"
+                                data-type="' . $location['location_type'] . '"
                                 >
                                 <i class="fas fa-edit"></i>
                             </button> ';
             }
 
             if ($deleteAllowed) {
-                $buttons .= '<button class="btn btn-sm btn-danger deleteProduct" data-id="' . $product['partner_product_id'] . '">
+                $buttons .= '<button class="btn btn-sm btn-danger deleteLocation" data-id="' . $location['location_id'] . '">
                                 <i class="fas fa-trash"></i>
                             </button>';
             }
 
             $result['data'][$key] = [
                 ($key + 1),
-                $product['product_name'] ?? '-',
-                $product['customer_sku'] ?? '-',
+                $location['location_code'] ?? '-',
+                $location['location_type'] ?? '-',
                 $buttons
             ];
         }
@@ -300,161 +301,139 @@ class MasterPartnerController extends BaseController
         ]);
     }
 
-    public function addProduct()
+    public function addLocation()
     {
-        $model = new PartnerProductModel();
-        $partnerId = $this->request->getPost('id');
-        $productId = $this->request->getPost('product_id');
-        $customerSku = $this->request->getPost('customer_sku');
+        $model = new LocationModel();
+        $warehouseId = $this->request->getPost('id');
+        $locationCode = $this->request->getPost('location_code');
+        $locationType = $this->request->getPost('location_type');
 
-        if (empty($partnerId)) {
+        if (empty($warehouseId)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to add product',
+                'message' => 'Failed to add location',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
         
-        if (empty($productId)) {
+        if (empty($locationCode)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Product is required',
+                'message' => 'Location Code is required',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
-        if (empty($customerSku)) {
+        if (empty($locationType)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'SKU is required',
+                'message' => 'Location Type is required',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
-        $exist = $model->where('partner_id', $partnerId)->where('product_id', $productId)->first();
+        $exist = $model->where('warehouse_id', $warehouseId)->where('location_code', $locationCode)->first();
 
         if($exist){
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Product already used',
-                'csrfHash' => csrf_hash()
-            ])->setStatusCode(400);
-        }
-
-        $existSku = $model->where('customer_sku', $customerSku)->where('partner_id', $partnerId)->first();
-        if($existSku){
-            return $this->response->setJSON([
-                'status'  => 'error',
-                'message' => 'Sku already used',
+                'message' => 'Location Code already used',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
         $data = [
-            'partner_id' => $partnerId,
-            'product_id' => $productId,
-            'customer_sku' => $customerSku,
+            'warehouse_id' => $warehouseId,
+            'location_code' => $locationCode,
+            'location_type' => $locationType,
         ];
 
         if ($model->insert($data)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Product added successfully',
+                'message' => 'Location added successfully',
                 'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to add product',
+                'message' => 'Failed to add location',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
 
-    public function updateProduct()
+    public function updateLocation()
     {
-        $model = new PartnerProductModel();
+        $model = new LocationModel();
+        $warehouseId = $this->request->getPost('wid');
         $dataId = $this->request->getPost('id');
-        $partnerId = intval($this->request->getPost('partner_id'));
-        $productReal = intval($this->request->getPost('product_real'));
-        $productId = intval($this->request->getPost('product_id'));
-        $customerSku = $this->request->getPost('customer_sku');
+        $locationCode = $this->request->getPost('location_code');
+        $locationType = $this->request->getPost('location_type');
 
-        if (empty($dataId)) {
+        if (empty($warehouseId)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to add product',
+                'message' => 'Failed to update location',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
         
-        if (empty($customerSku)) {
+        if (empty($locationCode)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Product is required',
+                'message' => 'Location Code is required',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
-        if (empty($productId)) {
+        if (empty($locationType)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'SKU is required',
+                'message' => 'Location Type is required',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
-        $bool = $productId == $productReal;
+        $exist = $model->where('warehouse_id', $warehouseId)->where('location_code', $locationCode)->first();
 
-        if(!$bool){
-            $exist = $model->where('product_id', $productId)->where('partner_id', $partnerId)->first();
-    
-            if($exist){
-                return $this->response->setJSON([
-                    'status'  => 'error',
-                    'message' => 'Product already used',
-                    'csrfHash' => csrf_hash()
-                ])->setStatusCode(400);
-            }
-        }
-
-        $existSku = $model->where('customer_sku', $customerSku)->where('partner_id', $partnerId)->first();
-        if($existSku){
+        if($exist){
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Sku already used',
+                'message' => 'Location Code already used',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
 
         $data = [
-            'product_id' => $productId,
-            'customer_sku' => $customerSku,
+            'warehouse_id' => $warehouseId,
+            'location_code' => $locationCode,
+            'location_type' => $locationType,
         ];
 
         if ($model->update($dataId, $data)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Product updated successfully',
+                'message' => 'Location updated successfully',
                 'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to update Product',
+                'message' => 'Failed to update Location',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
     }
 
-    public function deleteProduct()
+    public function deleteLocation()
     {
-        $model = new PartnerProductModel();
+        $model = new LocationModel();
         $id = $this->request->getPost('id');
         if (empty($id)) {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete product',
+                'message' => 'Failed to delete Location',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(400);
         }
@@ -462,13 +441,13 @@ class MasterPartnerController extends BaseController
         if ($model->delete($id)) {
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Product deleted successfully',
+                'message' => 'Location deleted successfully',
                 'csrfHash' => csrf_hash()
             ]);
         } else {
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete Product',
+                'message' => 'Failed to delete Location',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }

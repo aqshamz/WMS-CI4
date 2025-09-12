@@ -57,6 +57,21 @@ $routes->group('', ['filter' => 'authcheck'], function($routes) {
         $routes->post('delete-convertion', 'MasterProductController::deleteConvertion');
     });
 
+    $routes->group('warehouse', function($routes) {
+        $routes->get('/', 'MasterWarehouseController::index');
+        $routes->get('data', 'MasterWarehouseController::getWarehouse');
+        $routes->post('add', 'MasterWarehouseController::addWarehouse');
+        $routes->post('update', 'MasterWarehouseController::updateWarehouse');
+        $routes->post('delete', 'MasterWarehouseController::deleteWarehouse');
+
+        $routes->post('setLocation', 'MasterWarehouseController::setLocation');
+        $routes->get('location', 'MasterWarehouseController::location');
+        $routes->post('data-location', 'MasterWarehouseController::getLocation');
+        $routes->post('add-location', 'MasterWarehouseController::addLocation');
+        $routes->post('update-location', 'MasterWarehouseController::updateLocation');
+        $routes->post('delete-location', 'MasterWarehouseController::deleteLocation');
+    });
+
     $routes->group('admin', ['filter' => 'rolecheck:1'], function($routes) {
         $routes->get('users', 'UserController::index');
         $routes->get('roles', 'RoleController::index');

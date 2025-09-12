@@ -2,9 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\UserModel;
-use App\Models\PermissionModel;
-use App\Models\MenuModel;
 use App\Models\UomModel;
 
 class MasterUomController extends BaseController
