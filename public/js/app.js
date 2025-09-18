@@ -30,4 +30,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+
+    $(document).on('submit', 'form', function () {
+        let tokenName = $('meta[name="csrf-token-name"]').attr('content');
+        let tokenHash = $('meta[name="csrf-token-hash"]').attr('content');
+
+        let csrfField = $(this).find('input[name="' + tokenName + '"]');
+
+        if (csrfField.length) {
+            csrfField.val(tokenHash); // update existing
+        } else {
+            $(this).append('<input type="hidden" name="' + tokenName + '" value="' + tokenHash + '">');
+        }
+    });
+
 });

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ProductModel;
 use App\Models\UomModel;
 use App\Models\ProductUomModel;
+use App\Models\PartnerProductModel;
 
 class MasterProductController extends BaseController
 {
@@ -541,5 +542,47 @@ class MasterProductController extends BaseController
         }
     }
 
+    public function getProductPartner()
+    {
+        $vendor = $this->request->getPost('vendor');
 
+        if (empty($vendor)) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Vendor is required',
+                'csrfHash' => csrf_hash()
+            ])->setStatusCode(400);
+        }
+
+        $model = new PartnerProductModel();
+        $products = $model->getPartnerProductsDetail($vendor);
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => $products,
+            'csrfHash' => csrf_hash()
+        ]);
+    }
+
+    public function getConvertionJson()
+    {
+        $productId = $this->request->getPost('productId');
+
+        if (empty($productId)) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Product is required',
+                'csrfHash' => csrf_hash()
+            ])->setStatusCode(400);
+        }
+
+        $model = new ProductUomModel();
+        $uoms = $model->getProductsWithUom($productId);
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'data'   => $uoms,
+            'csrfHash' => csrf_hash()
+        ]);
+    }
 }

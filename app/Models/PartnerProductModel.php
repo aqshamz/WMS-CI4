@@ -12,8 +12,9 @@ class PartnerProductModel extends Model
 
     public function getPartnerProductsDetail($partnerId = null)
     {
-        $builder = $this->select('partner_products.*, master_products.name as product_name')
-                        ->join('master_products', 'master_products.product_id = partner_products.product_id');
+        $builder = $this->select('partner_products.*, master_products.name as product_name, master_products.base_uom_id as base_uom, master_uom.name AS base_uom_name')
+                        ->join('master_products', 'master_products.product_id = partner_products.product_id')
+                        ->join('master_uom', 'master_products.base_uom_id = master_uom.uom_id');
 
         if ($partnerId !== null) {
             $builder->where('partner_products.partner_id', $partnerId);
@@ -21,4 +22,5 @@ class PartnerProductModel extends Model
 
         return $builder->findAll();
     }
+
 }
