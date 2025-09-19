@@ -16,7 +16,7 @@ class Accesscheck implements FilterInterface
         $menuId = $arguments[1] ?? null;
         $subMenuId = $arguments[2] ?? null;
 
-        if (!hasPermission($permissionName, $menuId, $subMenuId, true)) {
+        if (!hasPermission($permissionName, $menuId, $subMenuId)) {
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
     }

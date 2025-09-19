@@ -17,12 +17,12 @@ class PurchaseOrderController extends BaseController
     
     public function index()
     {
-        if (!hasPermission('view', 'Inbound', 'Purchase Order', true)) { 
+        if (!hasPermission('view', 'Inbound', 'Purchase Order')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
         $createAllowed = false;
-        if (hasPermission('create', 'Inbound', 'Purchase Order', false)) { 
+        if (hasPermission('create', 'Inbound', 'Purchase Order')) { 
             $createAllowed = true;
         }
 
@@ -39,12 +39,12 @@ class PurchaseOrderController extends BaseController
         $result = ['data' => []];
 
         $updateAllowed = false;
-        if (hasPermission('update', 'Inbound', 'Purchase Order', false)) { 
+        if (hasPermission('update', 'Inbound', 'Purchase Order')) { 
             $updateAllowed = true;
         }
 
         $deleteAllowed = false;
-        if (hasPermission('delete', 'Inbound', 'Purchase Order', false)) { 
+        if (hasPermission('delete', 'Inbound', 'Purchase Order')) { 
             $deleteAllowed = true;
         }
 
@@ -111,7 +111,7 @@ class PurchaseOrderController extends BaseController
 
     public function createPO()
     {
-        if (!hasPermission('create', 'Inbound', 'Purchase Order', true)) { 
+        if (!hasPermission('create', 'Inbound', 'Purchase Order')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
@@ -131,7 +131,7 @@ class PurchaseOrderController extends BaseController
 
     public function savePO()
     {
-        if (!hasPermission('create', 'Inbound', 'Purchase Order', true)) { 
+        if (!hasPermission('create', 'Inbound', 'Purchase Order')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
@@ -260,7 +260,7 @@ class PurchaseOrderController extends BaseController
 
     public function editPO()
     {
-        if (!hasPermission('update', 'Inbound', 'Purchase Order', true)) { 
+        if (!hasPermission('update', 'Inbound', 'Purchase Order')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
@@ -318,7 +318,7 @@ class PurchaseOrderController extends BaseController
 
     public function updatePO()
     {
-        if (!hasPermission('update', 'Inbound', 'Purchase Order', true)) { 
+        if (!hasPermission('update', 'Inbound', 'Purchase Order')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 

@@ -15,7 +15,7 @@ function hasRole($role)
     return session()->get('role_id') === $role;
 }
 
-function hasPermission($permissionName, $menuId = null, $subMenuId = null, $access = null)
+function hasPermission($permissionName, $menuId = null, $subMenuId = null)
 {
     $session = session();
     $permissions = $session->get('permissions') ?? [];
@@ -28,9 +28,5 @@ function hasPermission($permissionName, $menuId = null, $subMenuId = null, $acce
         }
     }
 
-    if($access){
-        return redirect()->to('/')->with('error', 'Unauthorized access.');
-    }
-    
     return false;
 }

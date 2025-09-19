@@ -12,12 +12,12 @@ class MasterPartnerController extends BaseController
     
     public function index()
     {
-        if (!hasPermission('view', 'Master', 'Partner', true)) { 
+        if (!hasPermission('view', 'Master', 'Partner')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Partner', false)) { 
+        if (hasPermission('create', 'Master', 'Partner')) { 
             $createAllowed = true;
         }
 
@@ -34,12 +34,12 @@ class MasterPartnerController extends BaseController
         $result = ['data' => []];
 
         $updateAllowed = false;
-        if (hasPermission('update', 'Master', 'Partner', false)) { 
+        if (hasPermission('update', 'Master', 'Partner')) { 
             $updateAllowed = true;
         }
 
         $deleteAllowed = false;
-        if (hasPermission('delete', 'Master', 'Partner', false)) { 
+        if (hasPermission('delete', 'Master', 'Partner')) { 
             $deleteAllowed = true;
         }
 
@@ -212,7 +212,7 @@ class MasterPartnerController extends BaseController
 
     public function product()
     {
-        if (!hasPermission('edit', 'Master', 'Partner', true)) { 
+        if (!hasPermission('edit', 'Master', 'Partner')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
@@ -224,7 +224,7 @@ class MasterPartnerController extends BaseController
         
         
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Partner', false)) { 
+        if (hasPermission('create', 'Master', 'Partner')) { 
             $createAllowed = true;
         }
         
@@ -264,8 +264,8 @@ class MasterPartnerController extends BaseController
 
         $result = ['data' => []];
 
-        $updateAllowed = hasPermission('update', 'Master', 'Partner', false);
-        $deleteAllowed = hasPermission('delete', 'Master', 'Partner', false);
+        $updateAllowed = hasPermission('update', 'Master', 'Partner');
+        $deleteAllowed = hasPermission('delete', 'Master', 'Partner');
 
         foreach ($products as $key => $product) {
             $buttons = '';

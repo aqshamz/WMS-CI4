@@ -10,12 +10,12 @@ class MasterUomController extends BaseController
     
     public function index()
     {
-        if (!hasPermission('view', 'Master', 'Uom', true)) { 
+        if (!hasPermission('view', 'Master', 'Uom')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Uom', false)) { 
+        if (hasPermission('create', 'Master', 'Uom')) { 
             $createAllowed = true;
         }
 
@@ -32,12 +32,12 @@ class MasterUomController extends BaseController
         $result = ['data' => []];
 
         $updateAllowed = false;
-        if (hasPermission('update', 'Master', 'Uom', false)) { 
+        if (hasPermission('update', 'Master', 'Uom')) { 
             $updateAllowed = true;
         }
 
         $deleteAllowed = false;
-        if (hasPermission('delete', 'Master', 'Uom', false)) { 
+        if (hasPermission('delete', 'Master', 'Uom')) { 
             $deleteAllowed = true;
         }
 

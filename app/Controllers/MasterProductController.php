@@ -13,12 +13,12 @@ class MasterProductController extends BaseController
     
     public function index()
     {
-        if (!hasPermission('view', 'Master', 'Product', true)) { 
+        if (!hasPermission('view', 'Master', 'Product')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Product', false)) { 
+        if (hasPermission('create', 'Master', 'Product')) { 
             $createAllowed = true;
         }
 
@@ -38,8 +38,8 @@ class MasterProductController extends BaseController
 
         $result = ['data' => []];
 
-        $updateAllowed = hasPermission('update', 'Master', 'Product', false);
-        $deleteAllowed = hasPermission('delete', 'Master', 'Product', false);
+        $updateAllowed = hasPermission('update', 'Master', 'Product');
+        $deleteAllowed = hasPermission('delete', 'Master', 'Product');
 
         if (!empty($products)) {
             foreach ($products as $key => $product) {
@@ -297,7 +297,7 @@ class MasterProductController extends BaseController
 
     public function convertion()
     {
-        if (!hasPermission('edit', 'Master', 'Product', true)) { 
+        if (!hasPermission('edit', 'Master', 'Product')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
@@ -309,7 +309,7 @@ class MasterProductController extends BaseController
         
         
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Product', false)) { 
+        if (hasPermission('create', 'Master', 'Product')) { 
             $createAllowed = true;
         }
         
@@ -349,8 +349,8 @@ class MasterProductController extends BaseController
 
         $result = ['data' => []];
 
-        $updateAllowed = hasPermission('update', 'Master', 'Product', false);
-        $deleteAllowed = hasPermission('delete', 'Master', 'Product', false);
+        $updateAllowed = hasPermission('update', 'Master', 'Product');
+        $deleteAllowed = hasPermission('delete', 'Master', 'Product');
 
         foreach ($convertions as $key => $convertion) {
             $buttons = '';

@@ -10,12 +10,12 @@ class MasterWarehouseController extends BaseController
     
     public function index()
     {
-        if (!hasPermission('view', 'Master', 'Warehouse', true)) { 
+        if (!hasPermission('view', 'Master', 'Warehouse')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Warehouse', false)) { 
+        if (hasPermission('create', 'Master', 'Warehouse')) { 
             $createAllowed = true;
         }
 
@@ -35,8 +35,8 @@ class MasterWarehouseController extends BaseController
 
         $result = ['data' => []];
 
-        $updateAllowed = hasPermission('update', 'Master', 'Warehouse', false);
-        $deleteAllowed = hasPermission('delete', 'Master', 'Warehouse', false);
+        $updateAllowed = hasPermission('update', 'Master', 'Warehouse');
+        $deleteAllowed = hasPermission('delete', 'Master', 'Warehouse');
 
         if (!empty($warehouses)) {
             foreach ($warehouses as $key => $warehouse) {
@@ -217,7 +217,7 @@ class MasterWarehouseController extends BaseController
 
     public function location()
     {
-        if (!hasPermission('edit', 'Master', 'Warehouse', true)) { 
+        if (!hasPermission('edit', 'Master', 'Warehouse')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 
@@ -229,7 +229,7 @@ class MasterWarehouseController extends BaseController
         
         
         $createAllowed = false;
-        if (hasPermission('create', 'Master', 'Warehouse', false)) { 
+        if (hasPermission('create', 'Master', 'Warehouse')) { 
             $createAllowed = true;
         }
         
@@ -265,8 +265,8 @@ class MasterWarehouseController extends BaseController
 
         $result = ['data' => []];
 
-        $updateAllowed = hasPermission('update', 'Master', 'Warehouse', false);
-        $deleteAllowed = hasPermission('delete', 'Master', 'Warehouse', false);
+        $updateAllowed = hasPermission('update', 'Master', 'Warehouse');
+        $deleteAllowed = hasPermission('delete', 'Master', 'Warehouse');
 
         foreach ($locations as $key => $location) {
             $buttons = '';
