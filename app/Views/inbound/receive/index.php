@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/main') ?>
 
-<?= $this->section('title') ?>Purchase Order<?= $this->endSection() ?>
+<?= $this->section('title') ?>Receive Order<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <h1 class="h3 mb-4">Inbound</h1>
@@ -17,16 +17,11 @@
 <?php endif; ?>
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <span class="fw-bold">Purchase Order</span>
-        <?php if ($create): ?>
-            <a href="<?= site_url('orderin/create') ?>" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus me-1"></i> Add Purchase Order
-            </a>
-        <?php endif; ?>
+        <span class="fw-bold">Receive Order</span>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table id="poTable" class="table table-striped align-middle">
+            <table id="receiveTable" class="table table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>Reff Number</th>
@@ -49,9 +44,9 @@
 <script>
 $(document).ready(function () {
 
-    var manageTable = $('#poTable').DataTable({
+    var manageTable = $('#receiveTable').DataTable({
         "ajax": {
-            "url": "<?= site_url('orderin/data') ?>",
+            "url": "<?= site_url('receive/data') ?>",
             "type": "GET",
             "dataSrc": function(json) {
                 return json.data;
@@ -62,11 +57,11 @@ $(document).ready(function () {
         autoWidth: false
     });
 
-    $('#poTable').on('click', '.delete-po', function () {
+    $('#receiveTable').on('click', '.delete-receive', function () {
         const id = $(this).data('id');
         Swal.fire({
             title: 'Are you sure?',
-            text: "Do you really want to delete this Purchase Order?",
+            text: "Do you really want to delete this Receive Document?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -75,14 +70,14 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '<?= site_url('orderin/delete') ?>',
+                    url: '<?= site_url('receive/delete') ?>',
                     type: 'POST',
                     data: {
                         id: id
                     },
                     success: function (response) {                        
                         toastr.success(response.message);
-                        $('#poTable').DataTable().ajax.reload();
+                        $('#receiveTable').DataTable().ajax.reload();
                     },
                     error: function () {
                         let res = xhr.responseJSON;    
@@ -97,7 +92,7 @@ $(document).ready(function () {
         });
     });
 
-    $('#poTable').on('click', '.create-receive', function () {
+    $('#receiveTable').on('click', '.create-receive', function () {
         const id = $(this).data('id');
         Swal.fire({
             title: 'Create Receive Document?',
@@ -117,7 +112,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {                        
                         toastr.success(response.message);
-                        $('#poTable').DataTable().ajax.reload();
+                        $('#receiveTable').DataTable().ajax.reload();
                     },
                     error: function () {
                         let res = xhr.responseJSON;    

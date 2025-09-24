@@ -93,10 +93,14 @@ $routes->group('', ['filter' => 'authcheck'], function($routes) {
 
     $routes->group('receive', function($routes) { //po
         $routes->get('/', 'ReceiveController::index');
-        $routes->get('data', 'ReceiveController::getDocument');
-        $routes->post('create', 'ReceiveController::createPO');
+        $routes->get('data', 'ReceiveController::dataReceive');
+        $routes->post('create', 'ReceiveController::createReceive');
         $routes->post('update', 'ReceiveController::updatePO');
-        $routes->post('delete', 'ReceiveController::deletePO');
+        $routes->post('delete', 'ReceiveController::deleteReceive');
+
+        $routes->post('setProcessReceive', 'ReceiveController::setProcessReceive');
+        $routes->get('processReceive', 'ReceiveController::showReceive');
+        $routes->post('processReceive', 'ReceiveController::processReceive');
     });
 
     $routes->group('qualitycheck', function($routes) { //po

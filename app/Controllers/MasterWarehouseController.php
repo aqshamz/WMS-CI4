@@ -217,7 +217,7 @@ class MasterWarehouseController extends BaseController
 
     public function location()
     {
-        if (!hasPermission('edit', 'Master', 'Warehouse')) { 
+        if (!hasPermission('update', 'Master', 'Warehouse')) { 
             return redirect()->to('/')->with('error', 'Unauthorized access.');
         }
 

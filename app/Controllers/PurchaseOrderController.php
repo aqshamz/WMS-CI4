@@ -34,7 +34,7 @@ class PurchaseOrderController extends BaseController
     public function dataPO()
     {
         $model = new DocumentModel();
-        $po = $model->getDocuments('PO', NULL);
+        $po = $model->getDocuments('PO', NULL, NULL);
 
         $result = ['data' => []];
 
@@ -48,12 +48,32 @@ class PurchaseOrderController extends BaseController
             $deleteAllowed = true;
         }
 
+        $createReceive = false;
+        if (hasPermission('delete', 'Inbound', 'Receive')) { 
+            $createReceive = true;
+        }
+
         if (!empty($po)) {
             foreach ($po as $key => $po) {
                 $buttons = '';
 
                 $exist = $model->where('ref_document_id', $po['document_id'])->first();
 
+                if ($createReceive) {
+                    if(!$exist){
+                        $buttons .= ' <button type="button" class="btn btn-sm btn-success create-receive"
+                                        data-id="' . $po['document_id'] . '">
+                                        <i class="fa-solid fa-box"></i>
+                                      </button>';
+                    } else{
+                        if($po['status'] == "partial"){
+                            $buttons .= ' <button type="button" class="btn btn-sm btn-success create-receive"
+                                        data-id="' . $po['document_id'] . '">
+                                        <i class="fa-solid fa-box"></i>
+                                      </button>';
+                        }
+                    }
+                }
 
                 if ($updateAllowed) {
                     if(!$exist){
@@ -68,10 +88,12 @@ class PurchaseOrderController extends BaseController
                 }
 
                 if ($deleteAllowed) {
-                    $buttons .= ' <button type="button" class="btn btn-sm btn-danger delete-po"
-                                    data-id="' . $po['document_id'] . '">
-                                    <i class="fas fa-trash-alt"></i>
-                                  </button>';
+                    if(!$exist){
+                        $buttons .= ' <button type="button" class="btn btn-sm btn-danger delete-po"
+                                        data-id="' . $po['document_id'] . '">
+                                        <i class="fas fa-trash-alt"></i>
+                                      </button>';
+                    }
                 }
 
                 $status = $po['status'];
@@ -230,7 +252,7 @@ class PurchaseOrderController extends BaseController
 
             return $this->response->setJSON([
                 'status'  => 'success',
-                'message' => 'Product deleted successfully',
+                'message' => 'Purchase Order deleted successfully',
                 'csrfHash' => csrf_hash()
             ]);
 
@@ -239,7 +261,7 @@ class PurchaseOrderController extends BaseController
             $db->transRollback();
             return $this->response->setJSON([
                 'status'  => 'error',
-                'message' => 'Failed to delete Product',
+                'message' => 'Failed to delete Purchase Order',
                 'csrfHash' => csrf_hash()
             ])->setStatusCode(500);
         }
